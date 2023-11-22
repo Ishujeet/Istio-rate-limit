@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ratelimit-config
+  labels:
+    app: ratelimit
+data:
+  config.yaml: |
+    domain: rate-limit-test
+    descriptors:
+      - key: BAR
+        value: "/foo"
+        rate_limit:
+          unit: minute
+          requests_per_unit: 1
+      - key: BAR
+        rate_limit:
+          unit: minute
+          requests_per_unit: 100

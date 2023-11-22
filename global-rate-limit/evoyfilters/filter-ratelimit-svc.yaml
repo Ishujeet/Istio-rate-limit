@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: filter-ratelimit-svc
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      istio: istio-ingressgateway
+  configPatches:
+  - applyTo: VIRTUAL_HOST
+    match:
+      context: GATEWAY
+      routeConfiguration:
+          vhost:
+            name: ""
+            route:
+              action: ANY
+    patch:
+      operation: MERGE
+      value:
+        rate_limits:
+        - actions:
+          # This action results in the following descriptor ("BAR","/foo") where "/foo" is the requested path.
+          # :path is resolved to the actual requested path at runtime and used as the descriptor value
+          - request_headers:
+              header_name: ':path'
+              descriptor_key: 'BAR'
